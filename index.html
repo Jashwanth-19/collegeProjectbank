@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureBank | Banking Fraud Awareness Hub</title>
+<style>
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --text:#1f2937; --muted:#64748b;
+  --navy:#0b1f3a; --blue:#1e5aa8; --accent:#22c55e; --danger:#ef4444; --warn:#f59e0b;
+  --border:#e5e9f0; --shadow:0 10px 30px rgba(2,12,27,.08);
+}
+[data-theme="dark"]{
+  --bg:#0b1220; --card:#131c2e; --text:#e5eaf3; --muted:#94a3b8;
+  --navy:#0b1f3a; --blue:#3b82f6; --border:#22304a; --shadow:0 10px 30px rgba(0,0,0,.4);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;transition:background .4s,color .4s;}
+a{color:var(--blue);text-decoration:none;}
+.container{max-width:1120px;margin:0 auto;padding:0 22px;}
+/* NAV */
+header{position:sticky;top:0;z-index:100;background:rgba(11,31,58,.92);backdrop-filter:blur(10px);color:#fff;transition:all .3s;}
+header.scrolled{box-shadow:0 4px 20px rgba(0,0,0,.25);}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:16px 0;}
+.logo{font-size:1.4rem;font-weight:800;}
+.logo span{color:#7dd3fc;}
+.nav-links{display:flex;gap:22px;align-items:center;list-style:none;flex-wrap:wrap;}
+.nav-links a{color:#dbeafe;font-weight:500;position:relative;}
+.nav-links a::after{content:'';position:absolute;left:0;bottom:-4px;width:0;height:2px;background:#7dd3fc;transition:width .3s;}
+.nav-links a:hover::after{width:100%;}
+#themeBtn{background:rgba(255,255,255,.15);border:none;color:#fff;padding:8px 14px;border-radius:20px;cursor:pointer;font-size:1.1rem;}
+/* HERO */
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#0b1f3a,#1e5aa8 60%,#2f6fd0);color:#fff;padding:90px 0 110px;}
+.hero .blob{position:absolute;border-radius:50%;filter:blur(60px);opacity:.5;animation:float 8s ease-in-out infinite;}
+.blob1{width:300px;height:300px;background:#3b82f6;top:-60px;right:-40px;}
+.blob2{width:220px;height:220px;background:#22c55e;bottom:-40px;left:-30px;animation-delay:2s;}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-25px)}}
+.hero .container{position:relative;z-index:2;}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);padding:8px 16px;border-radius:30px;font-size:.85rem;margin-bottom:20px;animation:fadeUp .6s ease;}
+.badge .dot{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-size:2.9rem;line-height:1.15;margin-bottom:16px;animation:fadeUp .6s .1s both;}
+.hero h1 .grad{background:linear-gradient(90deg,#7dd3fc,#22c55e);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.hero p{font-size:1.15rem;max-width:620px;color:#dbeafe;animation:fadeUp .6s .2s both;}
+.hero-cta{margin-top:28px;display:flex;gap:14px;flex-wrap:wrap;animation:fadeUp .6s .3s both;}
+.btn{display:inline-block;padding:14px 28px;border-radius:12px;font-weight:700;border:none;cursor:pointer;font-size:1rem;transition:transform .2s,box-shadow .2s;}
+.btn:hover{transform:translateY(-3px);}
+.btn-primary{background:var(--accent);color:#06210f;box-shadow:0 8px 20px rgba(34,197,94,.35);}
+.btn-ghost{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(25px)}to{opacity:1;transform:translateY(0)}}
+/* TICKER */
+.ticker{background:#0b1f3a;color:#fff;overflow:hidden;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1);}
+.ticker-inner{display:flex;gap:40px;white-space:nowrap;animation:scroll 30s linear infinite;font-size:.9rem;}
+@keyframes scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-inner span{color:#7dd3fc;margin-right:8px;}
+/* STATS */
+.stats{position:relative;z-index:5;margin-top:-60px;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:20px;}
+.stat{background:var(--card);border-radius:16px;padding:26px;text-align:center;box-shadow:var(--shadow);border:1px solid var(--border);transition:transform .3s;}
+.stat:hover{transform:translateY(-6px);}
+.stat .num{font-size:2.2rem;font-weight:800;color:var(--blue);}
+.stat .label{color:var(--muted);font-size:.85rem;margin-top:6px;}
+/* SECTIONS */
+section{padding:70px 0;}
+.section-head{text-align:center;margin-bottom:46px;}
+.section-title{font-size:2.1rem;color:var(--navy);margin-bottom:10px;}
+[data-theme="dark"] .section-title{color:#fff;}
+.section-sub{color:var(--muted);max-width:680px;margin:0 auto;}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .7s,transform .7s;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+/* CARDS */
+.grid{display:grid;gap:24px;}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr));}
+.card{background:var(--card);border-radius:16px;padding:26px;box-shadow:var(--shadow);border:1px solid var(--border);transition:transform .3s,box-shadow .3s;position:relative;overflow:hidden;}
+.card:hover{transform:translateY(-8px);box-shadow:0 18px 40px rgba(2,12,27,.15);}
+.card .icon{font-size:2rem;margin-bottom:14px;display:inline-block;}
+.card h3{margin-bottom:10px;color:var(--text);font-size:1.15rem;}
+.card p{color:var(--muted);font-size:.95rem;}
+.card .bar{position:absolute;top:0;left:0;height:5px;width:100%;}
+.bar.red{background:linear-gradient(90deg,#ef4444,#f97316);}
+.bar.amber{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.bar.green{background:linear-gradient(90deg,#22c55e,#4ade80);}
+/* SEARCH */
+.search-box{max-width:520px;margin:0 auto 30px;}
+.search-box input{width:100%;padding:15px 20px;border-radius:30px;border:2px solid var(--border);font-size:1rem;background:var(--card);color:var(--text);}
+.search-box input:focus{outline:none;border-color:var(--blue);}
+/* SAFETY LIST */
+.safety{list-style:none;}
+.safety li{display:flex;gap:14px;padding:13px 0;border-bottom:1px solid var(--border);}
+.safety li:last-child{border-bottom:none;}
+.safety .check{color:var(--accent);font-size:1.3rem;line-height:1.4;flex-shrink:0;transition:transform .2s;}
+.safety li:hover .check{transform:scale(1.2);}
+/* CHECKER */
+.checker{background:linear-gradient(135deg,#0f2c52,#1e5aa8);color:#fff;border-radius:22px;padding:44px;box-shadow:0 20px 50px rgba(30,90,168,.3);}
+.checker h2{font-size:1.9rem;margin-bottom:8px;}
+.checker .sub{color:#dbeafe;margin-bottom:26px;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:.9rem;color:#dbeafe;margin-bottom:6px;font-weight:600;}
+input,select,textarea{width:100%;padding:13px 15px;border-radius:12px;border:none;font-size:1rem;background:#fff;color:#1f2937;transition:box-shadow .2s;}
+input:focus,select:focus,textarea:focus{outline:none;box-shadow:0 0 0 3px rgba(125,211,252,.5);}
+textarea{resize:vertical;min-height:80px;}
+#result{margin-top:26px;padding:22px;border-radius:14px;display:none;font-size:1rem;animation:pop .4s ease;}
+#result.flag{display:block;border:2px solid;}
+@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.result-title{font-weight:800;font-size:1.2rem;margin-bottom:10px;}
+.result-list{margin:10px 0 0 20px;}
+.result-list li{margin-bottom:6px;}
+/* PASSWORD METER */
+.pwd-wrap{background:var(--card);border-radius:20px;padding:36px;box-shadow:var(--shadow);border:1px solid var(--border);max-width:720px;margin:0 auto;}
+.meter{height:10px;background:var(--border);border-radius:20px;overflow:hidden;margin:14px 0;}
+.meter-fill{height:100%;width:0;background:var(--danger);transition:width .3s,background .3s;}
+.pwd-feedback{font-weight:600;min-height:24px;}
+/* QUIZ */
+.quiz-wrap{background:var(--card);border-radius:20px;padding:36px;box-shadow:var(--shadow);border:1px solid var(--border);max-width:720px;margin:0 auto;}
+.q-progress{height:8px;background:var(--border);border-radius:20px;overflow:hidden;margin-bottom:24px;}
+.q-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--accent));width:0;transition:width .4s;}
+.q-text{font-size:1.25rem;font-weight:600;margin-bottom:20px;color:var(--text);}
+.q-options{display:grid;gap:12px;}
+.q-option{background:var(--bg);border:2px solid var(--border);border-radius:12px;padding:14px 18px;cursor:pointer;font-size:1rem;text-align:left;transition:all .2s;color:var(--text);}
+.q-option:hover{border-color:var(--blue);transform:translateX(4px);}
+.q-option.correct{background:#dcfce7;border-color:var(--accent);color:#166534;}
+.q-option.wrong{background:#fee2e2;border-color:var(--danger);color:#b91c1c;}
+.q-nav{display:flex;justify-content:space-between;margin-top:24px;gap:12px;}
+.q-nav button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:1rem;transition:transform .2s;}
+.q-nav button:hover{transform:translateY(-2px);}
+#qNext{background:var(--blue);color:#fff;}
+#qPrev{background:var(--border);color:var(--text);}
+#qRestart{background:var(--accent);color:#06210f;}
+.quiz-result{text-align:center;padding:20px 0;}
+.quiz-result .score{font-size:3rem;font-weight:800;color:var(--blue);}
+.quiz-result p{color:var(--muted);margin-top:10px;}
+/* PHISHING GAME */
+.game-wrap{background:var(--card);border-radius:20px;padding:36px;box-shadow:var(--shadow);border:1px solid var(--border);max-width:720px;margin:0 auto;}
+.email{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:22px;margin:16px 0;}
+.email .from{font-weight:700;margin-bottom:8px;}
+.email .subject{font-weight:600;color:var(--blue);margin-bottom:10px;}
+.email .body{color:var(--muted);font-size:.95rem;}
+.game-btns{display:flex;gap:14px;flex-wrap:wrap;}
+.game-btns button{flex:1;min-width:180px;padding:14px;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:1rem;transition:transform .2s;}
+.game-btns button:hover{transform:translateY(-2px);}
+#phishBtn{background:var(--danger);color:#fff;}
+#legitBtn{background:var(--accent);color:#06210f;}
+.game-score{text-align:center;font-size:1.2rem;font-weight:700;margin-top:16px;color:var(--text);}
+/* ACCORDION */
+.acc-wrap{max-width:760px;margin:0 auto;}
+.acc-item{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow);}
+.acc-head{width:100%;text-align:left;padding:18px 22px;background:var(--card);border:none;font-size:1.05rem;font-weight:600;cursor:pointer;color:var(--text);display:flex;justify-content:space-between;align-items:center;}
+.acc-head .arrow{transition:transform .3s;color:var(--blue);}
+.acc-item.open .arrow{transform:rotate(180deg);}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .4s ease;background:var(--bg);}
+.acc-body p{padding:0 22px 22px;color:var(--muted);}
+/* RESOURCES */
+.resource{background:var(--card);border-radius:16px;padding:26px;box-shadow:var(--shadow);border:1px solid var(--border);transition:transform .3s;}
+.resource:hover{transform:translateY(-6px);}
+.resource h3{color:var(--text);margin-bottom:8px;font-size:1.1rem;}
+.resource p{color:var(--muted);font-size:.9rem;margin-bottom:14px;}
+.resource .phone{font-size:1.4rem;font-weight:800;color:var(--blue);}
+/* REPORT FORM */
+.report{background:var(--card);border-radius:20px;padding:36px;box-shadow:var(--shadow);border:1px solid var(--border);max-width:720px;margin:0 auto;}
+/* FOOTER */
+footer{background:var(--navy);color:#cbd5e1;padding:36px 0;text-align:center;font-size:.9rem;}
+footer a{color:#7dd3fc;}
+.disclaimer{font-size:.82rem;color:#94a3b8;max-width:760px;margin:12px auto 0;}
+/* TOAST */
+#toast{position:fixed;bottom:24px;right:24px;background:#111827;color:#fff;padding:14px 20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.3);transform:translateY(100px);opacity:0;transition:all .4s;z-index:999;font-size:.95rem;max-width:320px;}
+#toast.show{transform:translateY(0);opacity:1;}
+@media(max-width:640px){
+  .nav{flex-direction:column;gap:12px;}
+  .hero h1{font-size:2rem;}
+  .checker{padding:28px;}
+}
+</style>
+</head>
+<body data-theme="light">
+
+<header id="header">
+  <div class="container nav">
+    <div class="logo">Secure<span>Bank</span></div>
+    <ul class="nav-links">
+      <li><a href="#safety">Safety</a></li>
+      <li><a href="#frauds">Frauds</a></li>
+      <li><a href="#checker">Check</a></li>
+      <li><a href="#game">Spot the Scam</a></li>
+      <li><a href="#quiz">Quiz</a></li>
+      <li><a href="#resources">Resources</a></li>
+      <li><button id="themeBtn" onclick="toggleTheme()">&#127769;</button></li>
+    </ul>
+  </div>
+</header>
+
+<div class="ticker">
+  <div class="ticker-inner" id="ticker"></div>
+</div>
+
+<div class="hero">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="container">
+    <span class="badge"><span class="dot"></span> Fraud Awareness &amp; Prevention Hub</span>
+    <h1>Stay one step ahead of <span class="grad">banking fraud</span>.</h1>
+    <p>Explore common scams, adopt everyday safety habits, test your knowledge, and use our tools to check transactions, passwords, and suspicious emails before you act.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#checker">&#128269; Check a Transaction</a>
+      <a class="btn btn-ghost" href="#game">&#128680; Spot the Scam</a>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat"><div class="num" data-target="4">0</div><div class="label">Billion+ lost to fraud yearly</div></div>
+      <div class="stat"><div class="num" data-target="70">0</div><div class="label">% of scams start with a message</div></div>
+      <div class="stat"><div class="num" data-target="12">0</div><div class="label">Fraud types covered</div></div>
+      <div class="stat"><div class="num" data-target="100">0</div><div class="label">% preventable with caution</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- SAFETY -->
+<section id="safety">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-title">Common Safety Measures</h2>
+      <p class="section-sub">These simple routines dramatically cut your risk of becoming a victim.</p>
+    </div>
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <span class="icon">&#128273;</span><h3>Guard Your Credentials</h3>
+        <ul class="safety">
+          <li><span class="check">&#10003;</span><div>Never share your PIN, OTP, CVV, or full card number — not even with "bank staff".</div></li>
+          <li><span class="check">&#10003;</span><div>Use strong, unique passwords (test yours below) and change them regularly.</div></li>
+          <li><span class="check">&#10003;</span><div>Enable two-factor authentication (2FA) everywhere available.</div></li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <span class="icon">&#128737;</span><h3>Watch Your Accounts</h3>
+        <ul class="safety">
+          <li><span class="check">&#10003;</span><div>Review statements and transaction alerts regularly.</div></li>
+          <li><span class="check">&#10003;</span><div>Turn on real-time SMS / push notifications for every transaction.</div></li>
+          <li><span class="check">&#10003;</span><div>Report unfamiliar activity to your bank immediately.</div></li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <span class="icon">&#128279;</span><h3>Be Careful Online</h3>
+        <ul class="safety">
+          <li><span class="check">&#10003;</span><div>Only use your bank's official app or site — check for "https" and the lock icon.</div></li>
+          <li><span class="check">&#10003;</span><div>Avoid public Wi-Fi for banking; use a secure network or VPN.</div></li>
+          <li><span class="check">&#10003;</span><div>Don't click suspicious links in emails, SMS, or social media.</div></li>
+        </ul>
+      </div>
+      <div class="card reveal">
+        <span class="icon">&#129302;</span><h3>Stay Alert to Scams</h3>
+        <ul class="safety">
+          <li><span class="check">&#10003;</span><div>Banks never ask for OTPs or passwords over a call — hang up.</div></li>
+          <li><span class="check">&#10003;</span><div>Verify any "bank" message via the official number on your card.</div></li>
+          <li><span class="check">&#10003;</span><div>Keep your device software and antivirus up to date.</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FRAUDS -->
+<section id="frauds" style="background:var(--bg);">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-title">Common Banking Frauds</h2>
+      <p class="section-sub">Search the list, then click any card to see its red flag.</p>
+    </div>
+    <div class="search-box reveal">
+      <input type="text" id="fraudSearch" placeholder="&#128269;  Search frauds... e.g. UPI, SIM, phishing" oninput="filterFrauds()">
+    </div>
+    <div class="grid grid-3" id="fraudGrid"></div>
+  </div>
+</section>
+
+<!-- CHECKER -->
+<section id="checker" style="padding-top:0;">
+  <div class="container">
+    <div class="checker reveal">
+      <h2>&#128269; Transaction Safety Checker</h2>
+      <p class="sub">Answer a few questions about a transaction you're about to make. The tool flags common warning signs — it's a guide, not a guarantee.</p>
+      <div class="grid grid-2">
+        <div class="form-group">
+          <label for="amount">Transaction amount (&#8377; / $)</label>
+          <input type="number" id="amount" placeholder="e.g. 25000" min="0">
+        </div>
+        <div class="form-group">
+          <label for="recipient">Who are you sending money to?</label>
+          <select id="recipient">
+            <option value="">-- Select --</option>
+            <option value="known">Known person / trusted business</option>
+            <option value="stranger">Someone I met online / don't know</option>
+            <option value="govt">Claiming to be bank / government official</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="pressure">Is anyone pressuring you to act fast?</label>
+          <select id="pressure">
+            <option value="">-- Select --</option>
+            <option value="yes">Yes — urgent / time pressure</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="otp">Were you asked to share an OTP, PIN, or card details?</label>
+          <select id="otp">
+            <option value="">-- Select --</option>
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="method">Payment method</label>
+          <select id="method">
+            <option value="">-- Select --</option>
+            <option value="upi">UPI / instant transfer</option>
+            <option value="card">Card payment</option>
+            <option value="cash">Cash / bank transfer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="notes">Anything else suspicious? (optional)</label>
+          <textarea id="notes" placeholder="e.g. They asked me to install an app, or the deal seems too good..."></textarea>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="checkTransaction()">&#128640; Check Safety</button>
+      <div id="result"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PASSWORD METER -->
+<section id="password">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-title">Password Strength Meter</h2>
+      <p class="section-sub">Type a password to see how strong it is. Strong passwords are your first line of defense.</p>
+    </div>
+    <div class="pwd-wrap reveal">
+      <div class="form-group">
+        <label for="pwd">Enter a password</label>
+        <input type="text" id="pwd" placeholder="Type your password here..." oninput="checkPwd()">
+      </div>
+      <div class="meter"><div class="meter-fill" id="pwdFill"></div></div>
+      <div class="pwd-feedback" id="pwdMsg">Type to check strength</div>
+      <div class="safety" id="pwdTips" style="margin-top:16px;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- GAME -->
+<section id="game" style="background:var(--bg);">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-title">Spot the Scam</h2>
+      <p class="section-sub">Read each message and decide: is it a phishing scam or legitimate? Get 5 right to win.</p>
+    </div>
+    <div class="game-wrap reveal">
+      <div class="email" id="gameEmail"></div>
+      <div class="game-btns">
+        <button id="phishBtn" onclick="gameAnswer(false)">&#128680; Phishing / Scam</button>
+        <button id="legitBtn" onclick="gameAnswer(true)">&#9989; Legitimate</button>
+      </div>
+      <div class="game-score" id="gameScore"></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-title">Test Your Fraud IQ</h2>
+      <p class="section-sub">Answer 5 quick questions and see how well you can spot a scam.</p>
+    </div>
+    <div class="quiz-wrap reveal">
+      <div class="q-progress"><div class="q-fill" id="qFill"></div></div>
+      <div id="quizBody"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background:var(--bg);">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-sub">Quick answers to common banking-security questions.</p>
+    </div>
+    <div class="acc-wrap reveal" id="faqWrap"></div>
+  </div>
+</section>
+
+<!-- RESOURCES -->
+<section id="resources">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-title">Help &amp; Resources</h2>
+      <p class="section-sub">Official helplines and where to report fraud. Always use the number on your card or statement.</p>
+    </div>
+    <div class="grid grid-3">
+      <div class="resource reveal">
+        <h3>&#128222; Bank Helpline</h3>
+        <p>Call the number printed on the back of your card to report fraud or block a card.</p>
+        <div class="phone">1800-XXX-XXXX</div>
+      </div>
+      <div class="resource reveal">
+        <h3>&#128680; Cyber Fraud Reporting</h3>
+        <p>Report online fraud to the national cyber crime portal and helpline.</p>
+        <div class="phone">1930</div>
+      </div>
+      <div class="resource reveal">
+        <h3>&#128274; Card Blocking</h3>
+        <p>Instantly block a lost or compromised card through your banking app or helpline.</p>
+        <div class="phone">24&#215;7</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REPORT FORM -->
+<section id="report">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2 class="section-title">Report an Incident</h2>
+      <p class="section-sub">Fill this out to keep a record of a suspected fraud. Then call your bank immediately.</p>
+    </div>
+    <div class="report reveal">
+      <div class="grid grid-2">
+        <div class="form-group"><label for="rName">Your name</label><input id="rName" placeholder="Full name"></div>
+        <div class="form-group"><label for="rDate">Date of incident</label><input id="rDate" type="date"></div>
+        <div class="form-group"><label for="rType">Fraud type</label>
+          <select id="rType"><option value="">-- Select --</option><option>Phishing</option><option>Vishing / Smishing</option><option>UPI fraud</option><option>Card skimming</option><option>SIM swap</option><option>Other</option></select>
+        </div>
+        <div class="form-group"><label for="rAmount">Amount lost (&#8377;)</label><input id="rAmount" type="number" placeholder="0"></div>
+        <div class="form-group" style="grid-column:1/-1;"><label for="rDesc">Describe what happened</label><textarea id="rDesc" placeholder="Details of the incident..."></textarea></div>
+      </div>
+      <button class="btn btn-primary" onclick="submitReport()">&#128221; Save Report</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>SecureBank is an educational awareness resource. For real issues, contact your bank's official support immediately.</p>
+    <p class="disclaimer">All tools on this page provide general guidance based on common fraud patterns. They cannot guarantee the safety of any transaction. Always verify independently and contact your bank if in doubt.</p>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+/* THEME */
+function toggleTheme(){
+  var b=document.body;
+  var dark=b.getAttribute('data-theme')==='dark';
+  b.setAttribute('data-theme',dark?'light':'dark');
+  document.getElementById('themeBtn').innerHTML=dark?'&#127769;':'&#9728;&#65039;';
+  toast(dark?'Light mode on':'Dark mode on');
+}
+/* STICKY NAV */
+window.addEventListener('scroll',function(){document.getElementById('header').classList.toggle('scrolled',window.scrollY>40);});
+/* SCROLL REVEAL */
+var io=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target);}});},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+/* COUNTERS */
+var cio=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){var el=x.target,t=+el.getAttribute('data-target'),s=0,st=Math.max(1,Math.ceil(t/60));var iv=setInterval(function(){s+=st;if(s>=t){s=t;clearInterval(iv);}el.textContent=s+(t===100?'%':'');},25);cio.unobserve(el);}});},{threshold:.5});
+document.querySelectorAll('.num').forEach(function(el){cio.observe(el);});
+/* TICKER */
+var tickerMsgs=['&#128680; Alert: Banks never ask for OTPs by call','&#128680; Never approve a UPI "collect request" you didn\'t start','&#128680; Fake customer-care numbers appear in search ads — verify first','&#128680; Check the URL lock icon before logging in','&#128680; Report fraud immediately to 1930 / your bank helpline','&#128680; Strong passwords + 2FA stop most account takeovers'];
+var tickerHTML='';for(var i=0;i<2;i++){tickerMsgs.forEach(function(m){tickerHTML+='<span>'+m+'</span>';});}
+document.getElementById('ticker').innerHTML=tickerHTML;
+/* FRAUD CARDS */
+var frauds=[
+ {icon:'&#128220;',t:'red',name:'Phishing',desc:'Fake emails, texts, or websites that look like your bank to steal logins, OTPs, or card numbers.',flag:'Check the sender address and URL carefully.'},
+ {icon:'&#128222;',t:'red',name:'Vishing & Smishing',desc:'Scammers call or text posing as bank officials, pressuring you to reveal OTPs or install remote-access apps.',flag:'Banks never ask for OTPs by phone.'},
+ {icon:'&#128179;',t:'red',name:'Card Skimming',desc:'Devices secretly attached to ATMs or terminals capture your card data and PIN when you swipe.',flag:'Cover the keypad and inspect the card slot.'},
+ {icon:'&#128241;',t:'amber',name:'SIM Swap',desc:'Fraudsters move your number to their SIM to intercept OTPs and drain your account.',flag:'Report loss of network signal immediately.'},
+ {icon:'&#128176;',t:'amber',name:'UPI / Request Fraud',desc:'Scammers trick you into approving a "collect request" or sharing a UPI PIN for instant transfers.',flag:'Never approve a request you didn\'t initiate.'},
+ {icon:'&#128679;',t:'amber',name:'Fake Customer Care',desc:'Fraudsters pose as support agents and ask for remote access or OTPs to "help" you.',flag:'Use only the official number on your card.'},
+ {icon:'&#128200;',t:'red',name:'Investment Scams',desc:'Too-good-to-be-true returns or "processing fees" for loans that never arrive.',flag:'If it sounds too good, it is.'},
+ {icon:'&#128274;',t:'amber',name:'Account Takeover',desc:'Once credentials are stolen, fraudsters change details and transfer funds before you notice.',flag:'Watch for unexpected login alerts.'},
+ {icon:'&#128270;',t:'green',name:'QR Code Scams',desc:'Fake QR codes at shops or in messages redirect to payment requests or malicious links.',flag:'Check the destination before scanning.'},
+ {icon:'&#128184;',t:'amber',name:'Loan / Advance-Fee Fraud',desc:'Scammers demand a "processing fee" before a loan is approved, then disappear.',flag:'Real lenders deduct fees, they don\'t ask for upfront payment.'},
+ {icon:'&#128421;',t:'red',name:'Tech-Support Scam',desc:'Fake tech support gains remote access to your device and drains your accounts.',flag:'Never allow remote access to unknown callers.'},
+ {icon:'&#128176;',t:'green',name:'Fake Refund / Cashback',desc:'Messages claiming a refund require you to share OTP or card details to "receive" money.',flag:'You never pay to receive a refund.'}
+];
+function renderFrauds(list){
+  var grid=document.getElementById('fraudGrid');grid.innerHTML='';
+  list.forEach(function(f){
+    var c=document.createElement('div');
+    c.className='card reveal';
+    c.innerHTML='<div class="bar '+f.t+'"></div><span class="icon">'+f.icon+'</span><h3>'+f.name+'</h3><p>'+f.desc+'</p>';
+    c.style.cursor='pointer';
+    c.addEventListener('click',function(){toast('&#128680; Red flag: '+f.flag);});
+    grid.appendChild(c);
+    requestAnimationFrame(function(){c.classList.add('visible');});
+  });
+}
+function filterFrauds(){
+  var q=document.getElementById('fraudSearch').value.toLowerCase();
+  renderFrauds(frauds.filter(function(f){return f.name.toLowerCase().includes(q)||f.desc.toLowerCase().includes(q);}));
+}
+renderFrauds(frauds);
+/* TRANSACTION CHECKER */
+function checkTransaction(){
+  var amount=parseFloat(document.getElementById('amount').value)||0;
+  var recipient=document.getElementById('recipient').value;
+  var pressure=document.getElementById('pressure').value;
+  var otp=document.getElementById('otp').value;
+  var notes=(document.getElementById('notes').value||'').toLowerCase();
+  var flags=[];var risk=0;
+  if(recipient==='stranger'){flags.push('Sending money to someone you don\'t know personally.');risk+=2;}
+  if(recipient==='govt'){flags.push('Recipient claims to be a bank/government official — banks never collect payments this way.');risk+=3;}
+  if(pressure==='yes'){flags.push('You\'re being pressured to act urgently — scammers create urgency to stop you thinking.');risk+=2;}
+  if(otp==='yes'){flags.push('You were asked to share an OTP, PIN, or card details. Never share these.');risk+=3;}
+  if(amount>10000){flags.push('The amount is large — extra verification is wise.');risk+=1;}
+  if(notes.includes('install')||notes.includes('app')||notes.includes('remote')){flags.push('Asked to install an app or allow remote access — a major red flag.');risk+=3;}
+  if(notes.includes('prize')||notes.includes('lottery')||notes.includes('refund')||notes.includes('too good')){flags.push('Prizes, lottery, refunds, or "too good" deals often signal a scam.');risk+=2;}
+  var result=document.getElementById('result');var title,color,bg;
+  if(risk>=5){title='&#10060; HIGH RISK — Do not proceed';color='#ef4444';bg='#fef2f2';}
+  else if(risk>=2){title='&#9888;&#65039; CAUTION — Verify before proceeding';color='#f59e0b';bg='#fffbeb';}
+  else{title='&#9989; Looks reasonably safe';color='#22c55e';bg='#f0fdf4';}
+  var html='<div class="result-title">'+title+'</div>';
+  if(flags.length){html+='<ul class="result-list">';flags.forEach(function(f){html+='<li>'+f+'</li>';});html+='</ul>';}
+  else{html+='<p>No obvious warning signs detected. Still confirm the recipient and amount before paying.</p>';}
+  html+='<p style="margin-top:12px;font-size:.85rem;">General guidance only. When in doubt, contact your bank\'s official support.</p>';
+  result.style.borderColor=color;result.style.background=bg;result.style.color='#1f2937';
+  result.innerHTML=html;result.className='flag';
+  result.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+/* PASSWORD METER */
+function checkPwd(){
+  var p=document.getElementById('pwd').value;
+  var fill=document.getElementById('pwdFill'),msg=document.getElementById('pwdMsg'),tips=document.getElementById('pwdTips');
+  var score=0;var checks=[];
+  if(p.length>=8)score++;else checks.push('Use at least 8 characters');
+  if(/[A-Z]/.test(p)&&/[a-z]/.test(p))score++;else checks.push('Mix upper and lower case letters');
+  if(/\d/.test(p))score++;else checks.push('Add at least one number');
+  if(/[^A-Za-z0-9]/.test(p))score++;else checks.push('Add a special character (!@#$...)');
+  if(p.length>=12)score++;
+  var colors=['#ef4444','#f59e0b','#f59e0b','#22c55e','#22c55e','#16a34a'];
+  var labels=['Very weak','Weak','Fair','Good','Strong','Excellent'];
+  var idx=Math.min(score,5);
+  fill.style.width=(score/5*100)+'%';
+  fill.style.background=colors[idx];
+  msg.innerHTML='<span style="color:'+colors[idx]+'">'+labels[idx]+'</span>';
+  tips.innerHTML='';
+  if(score<5){checks.forEach(function(c){tips.innerHTML+='<li><span class="check">&#10003;</span><div>'+c+'</div></li>';});}
+  else{tips.innerHTML='<li><span class="check">&#10003;</span><div>Great password! Enable 2FA too for extra protection.</div></li>';}
+}
+/* GAME */
+var emails=[
+ {from:'"Your Bank" <support@secure-bank-verify.com>',subject:'URGENT: Your account will be suspended',body:'Dear customer, your account has been flagged. Click the link below within 24 hours to verify your details or your account will be locked. Verify Now: http://secure-bank-verify.com/login',legit:false},
+ {from:'"Your Bank" <noreply@yourbank.com>',subject:'Your monthly statement is ready',body:'Hi, your account statement for last month is now available. Log in to the official app to view it. We will never ask for your password.',legit:true},
+ {from:'"Prize Winner" <prizes@winbig.net>',subject:'Congratulations! You won $10,000',body:'You have been selected as our lucky winner! To claim your prize, pay a small processing fee of $50 to the account below. Hurry, offer ends soon!',legit:false},
+ {from:'"Your Bank" <alerts@yourbank.com>',subject:'New login detected on your account',body:'We noticed a new device logged into your account. If this wasn\'t you, please call us on the number printed on your card. We will never ask for your OTP.',legit:true},
+ {from:'"Tax Refund" <refunds@tax-office.info>',subject:'Your tax refund is pending',body:'You are eligible for a refund of $1,200. To receive it, please confirm your bank details and OTP by replying to this email.',legit:false}
+];
+var gi=0,gScore=0,gDone=false;
+function renderGame(){
+  var e=emails[gi];
+  document.getElementById('gameEmail').innerHTML='<div class="from">From: '+e.from+'</div><div class="subject">Subject: '+e.subject+'</div><div class="body">'+e.body+'</div>';
+  document.getElementById('gameScore').textContent='Message '+(gi+1)+' of '+emails.length+'  |  Score: '+gScore;
+}
+function gameAnswer(isLegit){
+  if(gDone)return;
+  var e=emails[gi];
+  if(isLegit===e.legit){gScore++;toast('&#9989; Correct!');}
+  else{toast('&#10060; Wrong! That was a '+(e.legit?'legitimate':'phishing')+' message.');}
+  gi++;
+  if(gi>=emails.length){gDone=true;document.getElementById('gameEmail').innerHTML='<div class="q-text" style="text-align:center;">Game over!</div><div class="game-score">Final score: '+gScore+' / '+emails.length+'</div>';}
+  else{renderGame();}
+}
+renderGame();
+/* QUIZ */
+var questions=[
+ {q:'A caller says they\'re from your bank and needs your OTP to "verify" your account. What do you do?',o:['Share it to be safe','Hang up — banks never ask for OTPs by call','Give your card number only','Tell them your password'],a:1},
+ {q:'Which URL is safest for online banking?',o:['http://bank-example.com','https://yourbank.com (official)','A link from an unknown SMS','Any link from search ads'],a:1},
+ {q:'What is a "collect request" scam?',o:['A legitimate bank fee','Someone tricks you into approving a payment request','A discount code','A new card feature'],a:1},
+ {q:'You receive: "You won a prize! Pay a small fee to claim it." This is most likely...',o:['A real prize','A scam','A bank offer','A tax notice'],a:1},
+ {q:'What should you do if you spot an unauthorized transaction?',o:['Wait a week','Contact your bank immediately and block the card','Ignore it','Pay it again'],a:1}
+];
+var qi=0,score=0,answered=false;
+function renderQuiz(){
+  var body=document.getElementById('quizBody');var q=questions[qi];
+  document.getElementById('qFill').style.width=((qi+1)/questions.length*100)+'%';
+  var html='<div class="q-text">Q'+(qi+1)+'/'+questions.length+': '+q.q+'</div><div class="q-options">';
+  q.o.forEach(function(opt,i){html+='<button class="q-option" onclick="answer('+i+')">'+opt+'</button>';});
+  html+='</div><div class="q-nav"><button id="qPrev" onclick="prevQ()">&#8592; Back</button><button id="qNext" onclick="nextQ()">Next &#8594;</button></div>';
+  body.innerHTML=html;
+  document.getElementById('qPrev').style.visibility=qi===0?'hidden':'visible';
+  document.getElementById('qNext').textContent=qi===questions.length-1?'See Result':'Next &#8594;';
+  answered=false;
+}
+function answer(i){
+  if(answered)return;answered=true;
+  var opts=document.querySelectorAll('.q-option');opts.forEach(function(o){o.disabled=true;});
+  if(i===questions[qi].a){opts[i].classList.add('correct');score++;}
+  else{opts[i].classList.add('wrong');opts[questions[qi].a].classList.add('correct');}
+}
+function nextQ(){if(qi<questions.length-1){qi++;renderQuiz();}else{showResult();}}
+function prevQ(){if(qi>0){qi--;renderQuiz();}}
+function showResult(){
+  var body=document.getElementById('quizBody');
+  var msg=score>=4?'Excellent! You\'re scam-savvy.':score>=2?'Good start — keep learning.':'Be careful — review the safety tips above.';
+  body.innerHTML='<div class="quiz-result"><div class="score">'+score+' / '+questions.length+'</div><p>'+msg+'</p><div class="q-nav"><button id="qRestart" onclick="restartQuiz()">&#128260; Try Again</button></div></div>';
+  document.getElementById('qFill').style.width='100%';
+}
+function restartQuiz(){qi=0;score=0;renderQuiz();}
+renderQuiz();
+/* FAQ */
+var faqs=[
+ {q:'What should I do first if I\'m scammed?',a:'Call your bank\'s helpline immediately to block the card/account, report the fraud on the national cyber crime portal (1930), and file a police complaint. Save all messages and transaction details as evidence.'},
+ {q:'Will my bank ever ask for my OTP or password?',a:'No. Legitimate banks never ask for your OTP, PIN, CVV, or full password — over the phone, SMS, or email. Anyone who does is a fraudster.'},
+ {q:'How can I tell a phishing email from a real one?',a:'Check the sender address, look for urgent language, spelling errors, and links that don\'t match the official domain. Real banks address you by name and never pressure you.'},
+ {q:'Is it safe to bank on public Wi-Fi?',a:'No. Public Wi-Fi can be intercepted. Use your mobile data or a trusted private network, and always check for the "https" lock icon.'},
+ {q:'How quickly should I report a suspicious transaction?',a:'Immediately — within minutes if possible. Quick action lets your bank block the card and possibly recover funds. Delays reduce your chances of a refund.'}
+];
+var faqWrap=document.getElementById('faqWrap');
+faqs.forEach(function(f,i){
+  var item=document.createElement('div');item.className='acc-item';
+  item.innerHTML='<button class="acc-head" onclick="toggleAcc(this)">'+f.q+'<span class="arrow">&#9660;</span></button><div class="acc-body"><p>'+f.a+'</p></div>';
+  faqWrap.appendChild(item);
+});
+function toggleAcc(btn){
+  var item=btn.parentElement;var body=item.querySelector('.acc-body');
+  var isOpen=item.classList.contains('open');
+  document.querySelectorAll('.acc-item').forEach(function(x){x.classList.remove('open');x.querySelector('.acc-body').style.maxHeight='0';});
+  if(!isOpen){item.classList.add('open');body.style.maxHeight=body.scrollHeight+'px';}
+}
+/* REPORT FORM */
+function submitReport(){
+  var n=document.getElementById('rName').value;
+  if(!n){toast('&#9888;&#65039; Please enter your name');return;}
+  toast('&#9989; Report saved. Now call your bank immediately.');
+  document.getElementById('rName').value='';document.getElementById('rDesc').value='';
+  document.getElementById('rAmount').value='';document.getElementById('rDate').value='';
+}
+/* TOAST */
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.innerHTML=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2500);
+}
+</script>
+</body>
+</html>
